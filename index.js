@@ -1,3 +1,4 @@
+
 require('dotenv').config();
 const { Client, GatewayIntentBits,   ActionRowBuilder,
   ButtonBuilder,
@@ -11,6 +12,13 @@ const client = new Client({
 client.once("clientReady", async () => {
 
     try {
+        const db = require('./db');
+        db.run(`CREATE TABLE IF NOT EXISTS commits (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            repo TEXT NOT NULL,
+            message TEXT NOT NULL,
+            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+        )`);
         const row = new ActionRowBuilder()
         .addComponents(
         new ButtonBuilder().
