@@ -1,6 +1,6 @@
 require('dotenv').config();
 const pool = require('./db');
-const {saveCommit} = require('./commitService');
+const {saveCommit, getTodayCommits} = require('./service');
 const { Client, GatewayIntentBits,   ActionRowBuilder,
   ButtonBuilder,
   ButtonStyle } = require('discord.js');
@@ -50,6 +50,8 @@ client.on('interactionCreate', async(interaction)=> {
         console.log(`Button Clicked: ${interaction.customId}`);
 
      if(interaction.customId === 'approve') {
+        const result = await getTodayCommits();
+        console.log(result);
         await interaction.update({
     content: `Post approved: ${interaction.customId}`,
     components: []
