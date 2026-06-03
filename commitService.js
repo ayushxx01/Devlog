@@ -6,7 +6,6 @@ async function saveCommit(repo, commit_hash, message, commitTime){
         [repo, commit_hash, message, commitTime]
     );
 }
-
 module.exports = {
     saveCommit,
 };
