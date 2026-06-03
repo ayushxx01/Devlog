@@ -69,7 +69,7 @@ const express = require('express');
 const app = express();
 app.use(express.json());
 
-app.post('/githook', (req,res)=> {
+app.post('/githook', async (req,res)=> {
  try {
         console.log("🔥🔥🔥 WEBHOOK HIT 🔥🔥🔥");
     const {repository, head_commit} = req.body;
