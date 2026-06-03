@@ -1,20 +1,23 @@
-const sqlite3 = require('sqlite3').verbose();
+const {Pool} = require('pg');
 
-const db = new sqlite3.Database('./devlog.db', (err)=> {
-    if (err) {
-        console.log("Error opening database", err);
+const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+});
+
+(async()=> {
+    try {
+        await pool.query(
+            `CREATE TABLE IF NOT EXISTS commits (
+        id SERIAL PRIMARY KEY,
+        repo TEXT NOT NULL,
+        commit_hash TEXT NOT NULL,
+        message TEXT NOT NULL,
+        commit_time TIMESTAMP NOT NULL
+            )`
+        );
+        console.log("✅ Database initialized");
+    } catch (error) {
+        console.error("Error initializing database:", error);
     }
-
-    else {
-        console.log("connected to database");
-        db.run(`CREATE TABLE IF NOT EXISTS commits (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            repo TEXT NOT NULL,
-            message TEXT NOT NULL,
-            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
-        )`);
-    }
-})
-
-
-module.exports = db;
+})();
+module.exports = pool;

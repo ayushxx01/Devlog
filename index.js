@@ -1,5 +1,6 @@
 require('dotenv').config();
-// const db = require('./db');
+const pool = require('./db');
+const {saveCommit} = require('./commitService');
 const { Client, GatewayIntentBits,   ActionRowBuilder,
   ButtonBuilder,
   ButtonStyle } = require('discord.js');
@@ -50,16 +51,6 @@ client.on('interactionCreate', async(interaction)=> {
         console.log(`Button Clicked: ${interaction.customId}`);
 
      if(interaction.customId === 'approve') {
-        // db.run(`INSERT INTO commits (repo, message) VALUES (?,?)`, ["devlogBot", "ch ch ch"],
-        //     function(err) {
-        //         if(err){
-        //             console.log("error submitting post", err);
-        //             return;
-                    
-        //         }
-        //         console.log("posted", this.lastID);
-        //     }
-        // );
         await interaction.update({
     content: `Post approved: ${interaction.customId}`,
     components: []
@@ -67,9 +58,7 @@ client.on('interactionCreate', async(interaction)=> {
     );
     }
 else {
-    // db.all(`SELECT * FROM commits`, [], (err,rows)=> {
-    //     console.log(rows);
-    // })
+    console.log(res.rows);
     await interaction.update({
         content: `Post skipped: ${interaction.customId}`,
         components: []
@@ -81,8 +70,21 @@ const app = express();
 app.use(express.json());
 
 app.post('/githook', (req,res)=> {
-    console.log("🔥🔥🔥 WEBHOOK HIT 🔥🔥🔥");
-    res.status(200).send('Webhook received');
+ try {
+        console.log("🔥🔥🔥 WEBHOOK HIT 🔥🔥🔥");
+    const {repository, head_commit} = req.body;
+    const repoName = repository.full_name;
+    const commitHash = head_commit.id;
+    const message = head_commit.message;
+    const commitTime = head_commit.timestamp;
+
+    await saveCommit(repoName, commitHash, message, commitTime);
+    res.status(200).send("Commit received");
+ } catch (error) {
+    console.error("Error processing webhook:", error);
+    res.status(500).send("Internal Server Error");
+ }
+
 });
 
 
