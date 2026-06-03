@@ -53,6 +53,7 @@ client.on('interactionCreate', async(interaction)=> {
         const result = await getTodayCommits();
         console.log(result);
         const summary = buildSummary(result);
+        console.log(summary);
         await interaction.update({
     content: `Post approved: ${interaction.customId}`,
     components: []
