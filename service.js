@@ -14,7 +14,13 @@ async function getTodayCommits() {
 
     return result.rows;
 }
+function buildSummary(commits) {
+    return commits
+        .map(commit => `• ${commit.message}`)
+        .join('\n');
+}
 module.exports = {
     saveCommit,
-    getTodayCommits
+    getTodayCommits,
+    buildSummary
 };

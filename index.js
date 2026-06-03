@@ -1,6 +1,6 @@
 require('dotenv').config();
 const pool = require('./db');
-const {saveCommit, getTodayCommits} = require('./service');
+const {saveCommit, getTodayCommits, buildSummary} = require('./service');
 const { Client, GatewayIntentBits,   ActionRowBuilder,
   ButtonBuilder,
   ButtonStyle } = require('discord.js');
@@ -52,6 +52,7 @@ client.on('interactionCreate', async(interaction)=> {
      if(interaction.customId === 'approve') {
         const result = await getTodayCommits();
         console.log(result);
+        const summary = buildSummary(result);
         await interaction.update({
     content: `Post approved: ${interaction.customId}`,
     components: []
@@ -59,7 +60,7 @@ client.on('interactionCreate', async(interaction)=> {
     );
     }
 else {
-    console.log(res.rows);
+  
     await interaction.update({
         content: `Post skipped: ${interaction.customId}`,
         components: []
