@@ -1,6 +1,6 @@
 require('dotenv').config();
 const pool = require('./db');
-const {saveCommit, getTodayCommits, buildSummary} = require('./service');
+const {saveCommit, getTodayCommits, buildSummary, fetchDailySummary} = require('./service');
 const { Client, GatewayIntentBits,   ActionRowBuilder,
   ButtonBuilder,
   ButtonStyle } = require('discord.js');
@@ -14,7 +14,7 @@ client.once("clientReady", async () => {
 
     try {
 
-        
+        fetchDailySummary();
         const row = new ActionRowBuilder()
         .addComponents(
         new ButtonBuilder().
@@ -54,11 +54,10 @@ client.on('interactionCreate', async(interaction)=> {
         console.log(result);
         const summary = buildSummary(result);
         console.log(summary);
-        await interaction.update({
-    content: `Post approved: ${interaction.customId}`,
-    components: []
-}  
-    );
+        await channel.send({
+        content: `📋 Today's Commits\n\n${summary}`,
+        components: [row]
+});
     }
 else {
   
