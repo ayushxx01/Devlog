@@ -7,6 +7,12 @@ const db = new sqlite3.Database('./devlog.db', (err)=> {
 
     else {
         console.log("connected to database");
+        db.run(`CREATE TABLE IF NOT EXISTS commits (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            repo TEXT NOT NULL,
+            message TEXT NOT NULL,
+            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+        )`);
     }
 })
 

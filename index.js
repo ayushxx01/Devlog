@@ -1,5 +1,5 @@
-
 require('dotenv').config();
+const db = require('./db');
 const { Client, GatewayIntentBits,   ActionRowBuilder,
   ButtonBuilder,
   ButtonStyle } = require('discord.js');
@@ -12,13 +12,8 @@ const client = new Client({
 client.once("clientReady", async () => {
 
     try {
-        const db = require('./db');
-        db.run(`CREATE TABLE IF NOT EXISTS commits (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            repo TEXT NOT NULL,
-            message TEXT NOT NULL,
-            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
-        )`);
+
+        
         const row = new ActionRowBuilder()
         .addComponents(
         new ButtonBuilder().
@@ -55,6 +50,16 @@ client.on('interactionCreate', async(interaction)=> {
         console.log(`Button Clicked: ${interaction.customId}`);
 
      if(interaction.customId === 'approve') {
+        db.run(`INSERT INTO commits (repo, message) VALUES (?,?)`, ["devlogBot", "ch ch ch"],
+            function(err) {
+                if(err){
+                    console.log("error submitting post", err);
+                    return;
+                    
+                }
+                console.log("posted", this.lastID);
+            }
+        );
         await interaction.update({
     content: `Post approved: ${interaction.customId}`,
     components: []
@@ -62,10 +67,29 @@ client.on('interactionCreate', async(interaction)=> {
     );
     }
 else {
+    db.all(`SELECT * FROM commits`, [], (err,rows)=> {
+        console.log(rows);
+    })
     await interaction.update({
         content: `Post skipped: ${interaction.customId}`,
         components: []
     });
 }});
+
+const express = require('express');
+const app = express();
+app.use(express.json());
+
+app.post('/githook', (req,res)=> {
+    console.log("Received webhook:", req.body);
+    res.status(200).send('Webhook received');
+
+
+});
+
+
+app.listen(process.env.PORT, ()=> {
+    console.log(`Server is running on port ${process.env.PORT}`);
+})
 
 client.login(process.env.DISCORD_TOKEN);
