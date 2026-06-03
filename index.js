@@ -1,5 +1,5 @@
 require('dotenv').config();
-const db = require('./db');
+// const db = require('./db');
 const { Client, GatewayIntentBits,   ActionRowBuilder,
   ButtonBuilder,
   ButtonStyle } = require('discord.js');
@@ -50,16 +50,16 @@ client.on('interactionCreate', async(interaction)=> {
         console.log(`Button Clicked: ${interaction.customId}`);
 
      if(interaction.customId === 'approve') {
-        db.run(`INSERT INTO commits (repo, message) VALUES (?,?)`, ["devlogBot", "ch ch ch"],
-            function(err) {
-                if(err){
-                    console.log("error submitting post", err);
-                    return;
+        // db.run(`INSERT INTO commits (repo, message) VALUES (?,?)`, ["devlogBot", "ch ch ch"],
+        //     function(err) {
+        //         if(err){
+        //             console.log("error submitting post", err);
+        //             return;
                     
-                }
-                console.log("posted", this.lastID);
-            }
-        );
+        //         }
+        //         console.log("posted", this.lastID);
+        //     }
+        // );
         await interaction.update({
     content: `Post approved: ${interaction.customId}`,
     components: []
@@ -67,9 +67,9 @@ client.on('interactionCreate', async(interaction)=> {
     );
     }
 else {
-    db.all(`SELECT * FROM commits`, [], (err,rows)=> {
-        console.log(rows);
-    })
+    // db.all(`SELECT * FROM commits`, [], (err,rows)=> {
+    //     console.log(rows);
+    // })
     await interaction.update({
         content: `Post skipped: ${interaction.customId}`,
         components: []
