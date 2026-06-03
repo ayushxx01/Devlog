@@ -39,7 +39,6 @@ client.once("clientReady", async () => {
         console.error("Error sending message:", error);
     }
 
-
 });
 client.on('interactionCreate', async(interaction)=> {
         if(!interaction.isButton()) return;
