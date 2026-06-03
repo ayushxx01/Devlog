@@ -81,10 +81,8 @@ const app = express();
 app.use(express.json());
 
 app.post('/githook', (req,res)=> {
-    console.log("Received webhook:", req.body);
+    console.log("🔥🔥🔥 WEBHOOK HIT 🔥🔥🔥");
     res.status(200).send('Webhook received');
-
-
 });
 
 
