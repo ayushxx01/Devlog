@@ -23,13 +23,7 @@ function buildSummary(commits) {
 async function fetchDailySummary() {
     const result = await getTodayCommits();
     const summary = buildSummary(result);
-
-    const channel = await client.channels.fetch(process.env.DISCORD_CHANNEL_ID);
-
-    await channel.send({
-        content: `📋 Today's Commits\n\n${summary}`,
-        components: [row]
-    });
+    return summary;
 }
 module.exports = {
     saveCommit,

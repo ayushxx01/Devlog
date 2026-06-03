@@ -14,7 +14,7 @@ client.once("clientReady", async () => {
 
     try {
 
-        fetchDailySummary();
+        
         const row = new ActionRowBuilder()
         .addComponents(
         new ButtonBuilder().
@@ -30,7 +30,13 @@ client.once("clientReady", async () => {
           console.log(`✅ Logged in as ${client.user.tag}`);
 
           const channel = await client.channels.fetch(process.env.CHANNEL_ID);
+           const summary = await fetchDailySummary();
+        await channel.send({
+            content: `📋 Today's Commits\n\n${summary}`,
+            components: [row]
+        });
 
+        
           await channel.send({
             content: "Devlog online, Hare krishna",
             components: [row]
