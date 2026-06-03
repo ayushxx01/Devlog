@@ -87,6 +87,11 @@ app.post('/githook', (req,res)=> {
 
 });
 
+app.post('/', (req,res)=> {
+    console.log("devlog running on render");
+        res.status(200).send("devlog running on render");
+})
+
 
 app.listen(process.env.PORT, ()=> {
     console.log(`Server is running on port ${process.env.PORT}`);
