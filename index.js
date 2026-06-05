@@ -4,11 +4,22 @@ const {saveCommit, getTodayCommits, buildSummary, fetchDailySummary} = require('
 const { Client, GatewayIntentBits,   ActionRowBuilder,
   ButtonBuilder,
   ButtonStyle } = require('discord.js');
-
+const cron = require('node-cron');
 
 const client = new Client({
     intents: [GatewayIntentBits.Guilds],
 });
+cron.schedule('* * * * *', async ()=> {
+    try{
+        const result = await getTodayCommits();
+        console.log(result);
+        const summary = buildSummary(result);
+        console.log(summary);
+    }
+    catch(error) {
+        console.error("Error fetching commits:", error);
+    }
+})
 
 client.once("clientReady", async () => {
 
@@ -56,10 +67,7 @@ client.on('interactionCreate', async(interaction)=> {
         console.log(`Button Clicked: ${interaction.customId}`);
 
      if(interaction.customId === 'approve') {
-        const result = await getTodayCommits();
-        console.log(result);
-        const summary = buildSummary(result);
-        console.log(summary);
+
         await channel.send({
         content: `📋 Today's Commits\n\n${summary}`,
         components: [row]
