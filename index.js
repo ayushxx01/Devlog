@@ -5,27 +5,23 @@ const { Client, GatewayIntentBits,   ActionRowBuilder,
   ButtonBuilder,
   ButtonStyle } = require('discord.js');
 const cron = require('node-cron');
-
+const summaryReal = '';
 const client = new Client({
     intents: [GatewayIntentBits.Guilds],
 });
-cron.schedule('* * * * *', async ()=> {
-    try{
-        const result = await getTodayCommits();
-        console.log(result);
-        const summary = buildSummary(result);
-        console.log(summary);
-    }
-    catch(error) {
-        console.error("Error fetching commits:", error);
-    }
-})
+
 
 client.once("clientReady", async () => {
+    console.log(`✅ Logged in as ${client.user.tag}`);
+});
 
-    try {
+cron.schedule('58 17 * * *', async () => {
+    console.log("Time to fetch today's summaries");
+    const res = await fetchDailySummary();
+    
 
-        
+    const channel = await client.channels.fetch(process.env.CHANNEL_ID);
+
         const row = new ActionRowBuilder()
         .addComponents(
         new ButtonBuilder().
@@ -37,27 +33,19 @@ client.once("clientReady", async () => {
         setCustomId('skip').
         setLabel("Skip").
         setStyle(ButtonStyle.Danger)
-    )
-          console.log(`✅ Logged in as ${client.user.tag}`);
+    );
+    await channel.send({
+        content: res,
+        components: [row]
+    });
 
-          const channel = await client.channels.fetch(process.env.CHANNEL_ID);
-           const summary = await fetchDailySummary();
-        await channel.send({
-            content: `📋 Today's Commits\n\n${summary}`,
-            components: [row]
-        });
 
-        
-          await channel.send({
-            content: "Devlog online, Hare krishna",
-            components: [row]
-          });
-    } catch (error) {
-        console.error("Error sending message:", error);
-    }
+
 
 });
+
 client.on('interactionCreate', async(interaction)=> {
+        const channel = await client.channels.fetch(process.env.CHANNEL_ID);
         if(!interaction.isButton()) return;
 
             console.log(
@@ -69,18 +57,23 @@ client.on('interactionCreate', async(interaction)=> {
      if(interaction.customId === 'approve') {
 
         await channel.send({
-        content: `📋 Today's Commits\n\n${summary}`,
-        components: [row]
+        content: `📋 approved`,
+        components: []
 });
     }
 else {
   
     await interaction.update({
-        content: `Post skipped: ${interaction.customId}`,
+        content: `skipped}`,
         components: []
     });
 }});
 
+
+
+
+
+// express configs
 const express = require('express');
 const app = express();
 app.use(express.json());
@@ -110,5 +103,9 @@ app.post('/', (req,res)=> {
 app.listen(process.env.PORT, ()=> {
     console.log(`Server is running on port ${process.env.PORT}`);
 })
+
+app.get('/callback', (req, res) => {
+    res.send('X OAuth callback');
+});
 
 client.login(process.env.DISCORD_TOKEN);

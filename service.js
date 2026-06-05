@@ -31,3 +31,4 @@ module.exports = {
     buildSummary,
     fetchDailySummary
 };
+
