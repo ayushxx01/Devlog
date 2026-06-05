@@ -1,6 +1,7 @@
 require('dotenv').config();
 const pool = require('./db');
 const {saveCommit, getTodayCommits, buildSummary, fetchDailySummary} = require('./service');
+const { generateSummary } = require('./services/aiservice');
 const { Client, GatewayIntentBits,   ActionRowBuilder,
   ButtonBuilder,
   ButtonStyle } = require('discord.js');
@@ -17,8 +18,8 @@ client.once("clientReady", async () => {
 
 cron.schedule('58 17 * * *', async () => {
     console.log("Time to fetch today's summaries");
-    const res = await fetchDailySummary();
-    
+    const res = await getTodayCommits();
+    const summary = await generateSummary(res);
 
     const channel = await client.channels.fetch(process.env.CHANNEL_ID);
 
@@ -35,7 +36,7 @@ cron.schedule('58 17 * * *', async () => {
         setStyle(ButtonStyle.Danger)
     );
     await channel.send({
-        content: res,
+        content: summary,
         components: [row]
     });
 
