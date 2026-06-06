@@ -92,7 +92,7 @@ app.post('/githook', async (req,res)=> {
  }
 });
 
-app.post('/', (req,res)=> {
+app.get('/', (req,res)=> {
     console.log("devlog running on render");
         res.status(200).send("devlog running on render");
 })
