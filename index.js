@@ -15,9 +15,13 @@ const client = new Client({
 client.once("clientReady", async () => {
     console.log(`✅ Logged in as ${client.user.tag}`);
 });
+cron.schedule('* * * * *', async () => {
+    console.log("CRON WORKING", new Date());
+});
 
 cron.schedule('14 13 * * *', async () => {
     console.log("Time to fetch today's summaries");
+    console.log("Fetching today's commits from the database...");
     const res = await getTodayCommits();
     const summary = await generateSummary(res);
 
