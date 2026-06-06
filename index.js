@@ -16,7 +16,7 @@ client.once("clientReady", async () => {
     console.log(`✅ Logged in as ${client.user.tag}`);
 });
 
-cron.schedule('30 23 * * *', async () => {
+cron.schedule('30 12 * * *', async () => {
     console.log("Time to fetch today's summaries");
     const res = await getTodayCommits();
     const summary = await generateSummary(res);
