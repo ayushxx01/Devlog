@@ -17,7 +17,7 @@ client.once("clientReady", async () => {
 });
 
 
-cron.schedule('20 18 * * *', async () => {
+cron.schedule('26 18 * * *', async () => {
     console.log("Time to fetch today's summaries");
     console.log("Fetching today's commits from the database...");
     const res = await getTodayCommits();
@@ -70,7 +70,11 @@ client.on('interactionCreate', async(interaction)=> {
         await channel.send({
         content: `📋 approved`,
         components: []
-});
+});     
+        await interaction.update({
+            content: "✅ Summary approved and saved to the database!",
+            components: []
+        })
     }
 else {
   
