@@ -15,6 +15,16 @@ const pool = new Pool({
         commit_time TIMESTAMP NOT NULL
             )`
         );
+
+        await pool.query(
+            `CREATE TABLE IF NOT EXISTS summaries (
+            id SERIAL PRIMARY KEY,
+            repo TEXT NOT NULL,
+            summary TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT NOW()
+            )`
+        )
+    
         console.log("✅ Database initialized");
     } catch (error) {
         console.error("Error initializing database:", error);

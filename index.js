@@ -17,7 +17,7 @@ client.once("clientReady", async () => {
 });
 
 
-cron.schedule('00 18 * * *', async () => {
+cron.schedule('20 18 * * *', async () => {
     console.log("Time to fetch today's summaries");
     console.log("Fetching today's commits from the database...");
     const res = await getTodayCommits();
@@ -28,7 +28,7 @@ cron.schedule('00 18 * * *', async () => {
         const row = new ActionRowBuilder()
         .addComponents(
         new ButtonBuilder().
-        setCustomId('approve').
+        setCustomId(`approve: ${res[0].repo}`).
         setLabel("Approve").
         setStyle(ButtonStyle.Success),
 
@@ -48,8 +48,11 @@ cron.schedule('00 18 * * *', async () => {
 });
 
 client.on('interactionCreate', async(interaction)=> {
+
+     if(!interaction.isButton()) return;
         const channel = await client.channels.fetch(process.env.CHANNEL_ID);
-        if(!interaction.isButton()) return;
+        const summary = interaction.message.content;
+       
 
             console.log(
         interaction.customId,
@@ -57,7 +60,12 @@ client.on('interactionCreate', async(interaction)=> {
     );
         console.log(`Button Clicked: ${interaction.customId}`);
 
-     if(interaction.customId === 'approve') {
+     if(interaction.customId.startsWith('approve:')) {
+
+        await pool.query(
+            'INSERT INTO summaries (repo, summary) VALUES ($1, $2)',
+            [interaction.customId.split(':')[1], summary]
+        )
 
         await channel.send({
         content: `📋 approved`,
@@ -67,7 +75,7 @@ client.on('interactionCreate', async(interaction)=> {
 else {
   
     await interaction.update({
-        content: `skipped}`,
+        content: `skipped`,
         components: []
     });
 }});
