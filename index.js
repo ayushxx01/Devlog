@@ -66,11 +66,7 @@ client.on('interactionCreate', async(interaction)=> {
             'INSERT INTO summaries (repo, summary) VALUES ($1, $2)',
             [interaction.customId.split(':')[1], summary]
         )
-
-        await channel.send({
-        content: `📋 approved`,
-        components: []
-});     
+    
         await interaction.update({
             content: "✅ Summary approved and saved to the database!",
             components: []
