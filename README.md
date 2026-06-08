@@ -1,36 +1,38 @@
 # DevLog
 
-DevLog is an automated GitHub progress tracking bot that transforms daily development activity into meaningful summaries.
+DevLog is an AI-powered developer journaling platform that transforms daily GitHub activity into meaningful progress updates.
 
-The project was built to solve a personal problem: staying consistent with sharing development progress publicly without manually rewriting Git commit history into social media updates.
+The project was built to solve a personal problem: staying consistent with documenting and sharing development progress without manually converting commit history into blog posts or social media updates.
 
-Instead of posting raw commit messages, DevLog collects development activity throughout the day, generates a high-level summary of the work completed, and sends it to Discord for approval before publishing.
+Instead of publishing raw commit messages, DevLog collects development activity throughout the day, generates a high-level summary of completed work using AI, and sends it to Discord for review before publication.
 
 ---
 
-## Motivation
+# Motivation
 
-When building projects, I often wanted to share progress updates on X (Twitter) as part of learning in public.
+When building projects, I often wanted to maintain a public development log and share progress consistently.
 
-The problem was that commit messages are usually written for developers, not for public updates.
+The problem was that commit messages are usually written for developers, not for readers.
 
 For example:
 
-* `fix padding issue`
-* `update webhook route`
-* `change button styles`
+```txt
+fix padding issue
+update webhook route
+change button styles
+```
 
-These commits may be useful internally but are not meaningful public updates.
+These commits may be useful internally but are not meaningful progress updates.
 
 DevLog aims to answer a more useful question:
 
-> What did I actually work on today?
+> What did I actually accomplish today?
 
 ---
 
-## Current Workflow
+# Current Workflow
 
-```text
+```txt
 Git Push
     ↓
 GitHub Webhook
@@ -41,116 +43,247 @@ Neon PostgreSQL
     ↓
 Store Commits
     ↓
-End of Day
+Scheduled Daily Job
     ↓
-Generate Summary
+Gemini AI Summary Generation
     ↓
 Discord Review
     ↓
 Approve / Skip
     ↓
-Post to X
+Store Approved Summary
+    ↓
+Blog API
+    ↓
+Portfolio DevLog Section
 ```
 
 ---
 
-## Architecture
+# Architecture
 
-### GitHub Webhooks
+## GitHub Webhooks
 
-DevLog uses GitHub Webhooks instead of polling GitHub's API.
+DevLog currently uses GitHub Webhooks to capture commit activity.
 
-This allows the backend to receive updates only when new commits are pushed, avoiding unnecessary API requests and resource usage.
-
-### Render
-
-The backend is deployed on Render so the application remains available without depending on a local machine being online.
-
-### Neon PostgreSQL
-
-Commit data is stored in Neon PostgreSQL.
-
-A cloud-hosted database allows commit history to persist independently of the developer's machine and makes it possible to generate summaries later in the day.
-
-### Discord Bot
-
-Discord acts as the approval layer.
-
-Instead of publishing every generated update automatically, DevLog sends the summary to Discord where it can be reviewed before publication.
-
-This prevents low-value updates from being posted publicly.
+Whenever code is pushed to a connected repository, GitHub sends a webhook event to the backend, allowing commit information to be collected in real time.
 
 ---
 
-## Why Store Commits?
+## Render
 
-Commits are stored throughout the day rather than processed immediately.
+The backend is deployed on Render and runs continuously in the cloud.
 
-This enables DevLog to:
-
-* Collect all development activity
-* Build a complete picture of the day's work
-* Generate a higher-quality summary
-* Avoid posting individual commit updates
+This allows commit tracking, scheduled summary generation, Discord integration, and blog serving without depending on a local machine.
 
 ---
 
-## Role of AI
+## Neon PostgreSQL
 
-The AI component is not intended to simply rewrite commit messages.
+Neon PostgreSQL serves as the primary data store.
 
-Instead, its role is to identify meaningful accomplishments from a collection of commits and generate a concise summary of the work completed.
+It stores:
 
-For example:
+* Incoming GitHub commits
+* Repository metadata
+* Approved development summaries
+
+This allows DevLog to build historical development logs and expose them through a public API.
+
+---
+
+## Gemini AI
+
+Gemini is responsible for transforming raw commit activity into meaningful development updates.
+
+Rather than rewriting commit messages, the goal is to identify outcomes and accomplishments from a collection of commits.
+
+Example:
 
 Raw commits:
 
-```text
+```txt
 add webhook endpoint
 connect postgres
 add discord approval buttons
 ```
 
-Desired summary:
+Generated summary:
 
-```text
-Built the core DevLog backend pipeline, enabling GitHub activity
-to be captured, stored, reviewed, and prepared for publication.
+```txt
+Built the core DevLog workflow, enabling GitHub activity
+to be captured, stored, summarized, and reviewed through Discord.
 ```
 
-The goal is to focus on outcomes rather than implementation details.
+The focus is on progress rather than implementation details.
 
 ---
 
-## Current Features
+## Discord Approval Layer
 
-* GitHub webhook integration
+Discord acts as the review and approval system.
+
+Generated summaries are delivered to a Discord channel where they can be approved or skipped before publication.
+
+This introduces a human review step and prevents low-value updates from being published automatically.
+
+---
+
+## Blog API
+
+Approved summaries are exposed through a paginated REST API.
+
+Example:
+
+```http
+GET /blogs?page=1
+```
+
+The endpoint returns the latest approved development logs, allowing external clients such as a portfolio website to display them dynamically.
+Live => https://ayushxx01.vercel.app/#logs
+---
+
+# Why Store Commits?
+
+Commits are collected throughout the day instead of being processed immediately.
+
+This allows DevLog to:
+
+* Capture complete development activity
+* Build context across multiple commits
+* Generate higher-quality summaries
+* Avoid publishing noisy commit-by-commit updates
+
+---
+
+# Current Features
+
+* GitHub Webhook integration
 * Render deployment
-* Neon PostgreSQL storage
+* Neon PostgreSQL integration
 * Commit persistence
-* Commit retrieval
+* Daily commit retrieval
+* Gemini AI summary generation
+* Automated scheduling with node-cron
 * Discord bot integration
-* Summary generation pipeline
 * Approve / Skip workflow
+* Approved summary storage
+* Paginated blog API
+* Portfolio blog integration
 
 ---
 
-## Future Plans
+# Current Limitations
 
-* AI-generated development summaries
-* Automated daily summary scheduling
-* X (Twitter) integration
-* Persistent approval history
-* Multi-platform publishing
-* Multi-user support
-* GitHub account linking
-* Discord bot onboarding
-* Social account integrations
+## Repository Tracking
+
+Repositories must currently be connected manually through GitHub Webhooks.
+
+Only repositories that have DevLog configured as a webhook source will be tracked.
 
 ---
 
-## Status
+## Personal Use
 
-Currently under active development as a personal tool.
+The platform currently operates as a personal developer journaling tool and does not support multiple users.
 
-The long-term goal is to create a workflow that helps developers maintain a personal development journal while making it easier to share meaningful progress publicly.
+---
+
+## GitHub Coverage
+
+DevLog cannot yet automatically discover activity across an entire GitHub account.
+
+Repositories must be explicitly connected.
+
+---
+
+## Publishing Targets
+
+The current version publishes approved summaries to the portfolio blog.
+
+Direct publishing to external social platforms is still under development.
+
+---
+
+# V2 Roadmap
+
+## Multi-Repository Support
+
+Support multiple connected repositories and generate repository-aware summaries.
+
+Example:
+
+```txt
+DevLog
+- Added approval workflow
+- Added blog API
+
+Faraway
+- Improved relationship journaling flow
+
+Portfolio
+- Added DevLog integration
+```
+
+---
+
+## GitHub Account Integration
+
+Move beyond webhook-only tracking by integrating with the GitHub API.
+
+Goals:
+
+* Track activity across all repositories
+* Eliminate manual webhook setup
+* Generate complete daily development journals
+
+---
+
+## Social Publishing
+
+Support publishing approved summaries to:
+
+* X (Twitter)
+* LinkedIn
+* Additional platforms
+
+---
+
+## Advanced AI Features
+
+* Better commit clustering
+* Weekly recaps
+* Monthly recaps
+* Repository-specific summaries
+* Improved noise filtering
+
+---
+
+## Multi-User Support
+
+Allow developers to connect their own GitHub accounts and generate personalized development journals.
+
+Potential additions:
+
+* GitHub OAuth
+* Discord onboarding
+* User-specific dashboards
+* Multiple publishing destinations
+
+---
+
+# Status
+
+Currently functional and under active development.
+
+The current version successfully:
+
+* Captures GitHub activity
+* Stores commit history
+* Generates AI-powered summaries
+* Supports Discord-based approval workflows
+* Persists approved development logs
+* Exposes them through a paginated API
+* Displays them on a portfolio website
+
+The long-term goal is to create a developer journaling platform that helps developers maintain a meaningful development history while making it easier to share progress publicly.
