@@ -115,4 +115,17 @@ app.get('/callback', (req, res) => {
     res.send('X OAuth callback');
 });
 
+app.get('/blogs', async (req,res)=> {
+    
+        const page = Number(req.query.page) || 1;
+        const limit = 5;
+        const offset = (page - 1) * limit;
+
+        const result = await pool.query(
+            `SELECT * FROM summaries ORDER BY created_at DESC LIMIT $1 OFFSET $2`,
+            [limit, offset]
+        );
+        res.json(result.rows);
+});
+
 client.login(process.env.DISCORD_TOKEN);
