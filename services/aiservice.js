@@ -11,51 +11,37 @@ async function generateSummary(commits) {
         .map(commit => commit.message)
         .join('\n');
 
-const prompt = `
-You are an experienced software engineering assistant.
+const prompt = `You are generating a developer journal from Git commits.
 
-You will receive Git commit messages grouped by repository.
-
-Your task is to analyze each repository independently and generate a concise development update.
+The commits are grouped by repository.
 
 Rules:
 
-* Treat each repository as a separate project.
-* Never mix work from different repositories.
-* Ignore trivial commits such as:
+- Generate a separate section for each repository.
+- Only use information explicitly present in the commits.
+- Do not invent business impact.
+- Do not speculate about user benefits.
+- Do not assume why a feature was built.
+- Combine related commits into a concise engineering summary.
+- Ignore trivial commits:
+  - test
+  - testing
+  - typo
+  - docs
+  - formatting
+  - dependency bumps
+- Focus on technical progress completed.
+- Write 1-3 sentences per repository.
+- Use clear developer-focused language.
 
-  * test
-  * testing
-  * typo fixes
-  * formatting changes
-  * merge commits
-  * dependency bumps unless significant
-* Group related commits together.
-* Focus on accomplishments and outcomes rather than implementation details.
-* Explain what was achieved, not what files were edited.
-* Write 1-3 concise sentences per repository.
-* If a repository only contains trivial commits, omit it entirely.
-* Use professional but simple language.
-
-Output format:
+Output Format:
 
 ## Repository Name
 
-Summary of meaningful work completed.
-
-Example:
-
-## DevLog
-
-Built the approval workflow for AI-generated development summaries and added support for storing approved entries for future publishing.
-
-## Faraway
-
-Improved the relationship journaling experience by refining onboarding flows and strengthening partner connection workflows.
+Summary
 
 Commits:
 {{COMMITS}}
-
 `;
 console.log(commitMessages);
 console.log("Generating summary with Gemini API...");
