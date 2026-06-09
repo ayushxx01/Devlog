@@ -15,9 +15,29 @@ async function getTodayCommits() {
     return result.rows;
 }
 function buildSummary(commits) {
-    return commits
-        .map(commit => `• ${commit.message}`)
-        .join('\n');
+    const grouped = {};
+
+    commits.forEach(commit => {
+        if (!grouped[commit.repo]) {
+            grouped[commit.repo] = [];
+        }
+
+        grouped[commit.repo].push(commit.message);
+    });
+
+    let result = '';
+
+    for (const [repo, messages] of Object.entries(grouped)) {
+        result += `Repository: ${repo}\n`;
+
+        messages.forEach(msg => {
+            result += `- ${msg}\n`;
+        });
+
+        result += '\n';
+    }
+
+    return result;
 }
 
 async function fetchDailySummary() {
