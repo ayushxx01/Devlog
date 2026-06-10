@@ -39,8 +39,7 @@ Output Format:
 ## Repository Name
 
 Summary
-
-Commits: ${commits}
+Commits: ${commitMessages}
 `;
 console.log(commitMessages);
 console.log("Generating summary with Gemini API...");
