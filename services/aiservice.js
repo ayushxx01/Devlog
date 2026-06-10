@@ -40,8 +40,7 @@ Output Format:
 
 Summary
 
-Commits:
-{{COMMITS}}
+Commits: ${commits}
 `;
 console.log(commitMessages);
 console.log("Generating summary with Gemini API...");

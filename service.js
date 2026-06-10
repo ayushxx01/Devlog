@@ -44,6 +44,7 @@ async function fetchDailySummary() {
     const result = await getTodayCommits();
     const summary = buildSummary(result);
     return summary;
+    console.log(summary);
 }
 module.exports = {
     saveCommit,
