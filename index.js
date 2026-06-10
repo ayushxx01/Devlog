@@ -17,7 +17,7 @@ client.once("clientReady", async () => {
 });
 
 
-cron.schedule('25 18 * * *', async () => {
+cron.schedule('30 13 * * *', async () => {
     console.log("Time to fetch today's summaries");
     console.log("Fetching today's commits from the database...");
     const res = await getTodayCommits();
