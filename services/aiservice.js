@@ -7,41 +7,25 @@ const ai = new GoogleGenAI({
 
 async function generateSummary(commits) {
 
-    const commitMessages = commits
-        .map(commit => commit.message)
-        .join('\n');
 
-const prompt = `You are generating a developer journal from Git commits.
+const prompt = `You are a developer journal generator.
 
-The commits are grouped by repository.
+Given the following Git commits grouped by repository, write a concise engineering summary for each repository.
 
 Rules:
+- One section per repository
+- 1-3 sentences of technical summary only
+- Ignore: test, testing, typo, docs, formatting, dependency bumps
+- No business impact, no speculation, no invented context
+- Use developer-focused language
 
-- Generate a separate section for each repository.
-- Only use information explicitly present in the commits.
-- Do not invent business impact.
-- Do not speculate about user benefits.
-- Do not assume why a feature was built.
-- Combine related commits into a concise engineering summary.
-- Ignore trivial commits:
-  - test
-  - testing
-  - typo
-  - docs
-  - formatting
-  - dependency bumps
-- Focus on technical progress completed.
-- Write 1-3 sentences per repository.
-- Use clear developer-focused language.
+Commit Data:
+${commits}
 
 Output Format:
-
 ## Repository Name
-
-Summary
-Commits: ${commitMessages}
-`;
-console.log(commitMessages);
+Summary here.`;
+console.log(commits);
 console.log("Generating summary with Gemini API...");
     const response = await ai.models.generateContent({
         model: "gemini-2.5-flash",
