@@ -17,10 +17,10 @@ client.once("clientReady", async () => {
 });
 
 
-cron.schedule('43 13 * * *', async () => {
+cron.schedule('00 18 * * *', async () => {
     console.log("Time to fetch today's summaries");
     console.log("Fetching today's commits from the database...");
-    const res = await getTodayCommits();
+    const res = await fetchDailySummary();
     const summary = await generateSummary(res);
 
     const channel = await client.channels.fetch(process.env.CHANNEL_ID);
