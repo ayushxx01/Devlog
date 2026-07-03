@@ -15,7 +15,6 @@ client.once("clientReady", async () => {
     console.log(`✅ Logged in as ${client.user.tag}`);
 });
 
-
 cron.schedule('00 18 * * *', async () => {
     console.log("Time to fetch today's summaries");
     console.log("Fetching today's commits from the database...");
