@@ -11,7 +11,6 @@ const client = new Client({
     intents: [GatewayIntentBits.Guilds],
 });
 
-
 client.once("clientReady", async () => {
     console.log(`✅ Logged in as ${client.user.tag}`);
 });
